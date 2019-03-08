@@ -17,7 +17,8 @@ class Register extends Component {
     email: "",
     password: "",
     passwordConfirm: "",
-    errors: []
+    errors: [],
+    loading: false
   };
 
   isFormValid = () => {
@@ -64,23 +65,41 @@ class Register extends Component {
   };
 
   handleSubmit = event => {
+    event.preventDefault();
     if (this.isFormValid()) {
-      event.preventDefault();
+      this.setState({ errors: [], loading: true });
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then(user => {
           console.log(user);
+          this.setState({ loading: false });
         })
         .catch(err => {
           console.log(err);
+          this.setState({
+            errors: this.state.errors.concat(err),
+            loading: false
+          });
         });
-    } else {
     }
   };
 
+  handleInputError = (errors, inputName) => {
+    return errors.some(error => error.message.toLowerCase().includes(inputName))
+      ? "error"
+      : "";
+  };
+
   render() {
-    const { username, email, password, passwordConfirm, errors } = this.state;
+    const {
+      username,
+      email,
+      password,
+      passwordConfirm,
+      errors,
+      loading
+    } = this.state;
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
         <Grid.Column style={{ maxWidth: 450 }}>
@@ -108,6 +127,7 @@ class Register extends Component {
                 icon="mail"
                 iconPosition="left"
                 placeholder="Email Address"
+                className={this.handleInputError(errors, "email")}
                 onChange={this.handleChange}
               />
 
@@ -119,6 +139,7 @@ class Register extends Component {
                 icon="lock"
                 iconPosition="left"
                 placeholder="Password"
+                className={this.handleInputError(errors, "password")}
                 onChange={this.handleChange}
               />
 
@@ -130,9 +151,16 @@ class Register extends Component {
                 icon="repeat"
                 iconPosition="left"
                 placeholder="Confirm Password"
+                className={this.handleInputError(errors, "passwordConfirm")}
                 onChange={this.handleChange}
               />
-              <Button color="orange" size="large" fluid>
+              <Button
+                disabled={loading}
+                className={loading ? "loading" : ""}
+                color="orange"
+                size="large"
+                fluid
+              >
                 Submit
               </Button>
             </Segment>
