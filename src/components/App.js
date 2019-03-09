@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 import "./App.css";
-import GridColumn, { Grid } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
 import ColorPanel from "./ColorPanel/ColorPanel";
 import SidePanel from "./SidePanel/SidePanel";
 import Messages from "./Messages/Messages";
