@@ -20,7 +20,7 @@ class Channels extends Component {
     this.addListeners();
   }
 
-  componentWillMount() {
+  componentWillUnmount() {
     this.removeListeners();
   }
 
@@ -52,7 +52,7 @@ class Channels extends Component {
         key={channel.id}
         name={channel.name}
         style={{ opacity: 0.7 }}
-        onClick={this.changeChannel(channel)}
+        onClick={() => this.changeChannel(channel)}
         active={channel.id === this.state.activeChannel}
       >
         # {channel.name}
