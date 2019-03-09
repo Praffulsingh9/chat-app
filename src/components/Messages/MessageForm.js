@@ -34,7 +34,7 @@ class MessageForm extends Component {
       messagesRef
         .child(channel.id)
         .push()
-        .set(this.createMessage)
+        .set(this.createMessage())
         .then(() => {
           this.setState({ loading: false, message: "", errors: [] });
         })
