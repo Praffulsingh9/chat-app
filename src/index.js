@@ -16,6 +16,9 @@ import {
 import firebase from "./firebase";
 import rootReducer from "./reducers/index";
 import { setUser } from "./actions";
+import Spinner from "./Spinner";
+
+//Initializing a store
 const store = createStore(rootReducer, composeWithDevTools());
 
 class Root extends Component {
@@ -29,21 +32,25 @@ class Root extends Component {
   }
 
   render() {
-    return (
-      <Router>
-        <Switch>
-          <Route exact path="/" component={App} />
-          <Route path="/login" component={Login} />
-          <Route path="/register" component={Register} />
-        </Switch>
-      </Router>
+    return this.props.isLoading ? (
+      <Spinner />
+    ) : (
+      <Switch>
+        <Route exact path="/" component={App} />
+        <Route path="/login" component={Login} />
+        <Route path="/register" component={Register} />
+      </Switch>
     );
   }
 }
 
-const RootWithRouter = withRouter(
+const mapStateToProps = state => ({
+  isLoading: state.user.isLoading
+});
+
+const RootWithAuth = withRouter(
   connect(
-    null,
+    mapStateToProps,
     { setUser }
   )(Root)
 );
@@ -51,7 +58,7 @@ const RootWithRouter = withRouter(
 ReactDOM.render(
   <Provider store={store}>
     <Router>
-      <RootWithRouter />
+      <RootWithAuth />
     </Router>
   </Provider>,
   document.getElementById("root")
