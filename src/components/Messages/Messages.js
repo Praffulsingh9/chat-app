@@ -130,7 +130,6 @@ class Messages extends Component {
           messagesRef={messagesRef}
           currentChannel={channel}
           currentUser={user}
-          isProgressBarVisible={this.isProgressBarVisible}
           isPrivateChannel={privateChannel}
           getMessagesRef={this.getMessagesRef}
         />
