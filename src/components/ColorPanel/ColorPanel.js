@@ -10,6 +10,8 @@ import {
   Segment
 } from "semantic-ui-react";
 
+import { connect } from "react-redux";
+import { setColors } from "../../actions";
 import { SliderPicker } from "react-color";
 import firebase from "../../firebase";
 class ColorPanel extends Component {
@@ -18,7 +20,22 @@ class ColorPanel extends Component {
     primary: "",
     secondary: "",
     user: this.props.currentUser,
+    userColors: [],
     usersRef: firebase.database().ref("users")
+  };
+
+  componentDidMount() {
+    if (this.state.user) {
+      this.addListeners(this.state.user.currentUser.uid);
+    }
+  }
+
+  addListeners = userId => {
+    let userColors = [];
+    this.state.usersRef.child(`${userId}/colors`).on("child_added", snap => {
+      userColors.unshift(snap.val());
+      this.setState({ userColors });
+    });
   };
 
   openModal = () => this.setState({ modal: true });
@@ -50,8 +67,27 @@ class ColorPanel extends Component {
       .catch(err => console.error(err));
   };
 
+  displayUserColors = colors =>
+    colors.length > 0 &&
+    colors.map((color, i) => (
+      <React.Fragment key={i}>
+        <Divider />
+        <div
+          className="color__container"
+          onClick={() => this.props.setColors(color.primary, color.secondary)}
+        >
+          <div className="color__square" style={{ color: color.primary }}>
+            <div
+              className="color__overlay"
+              style={{ color: color.secondary }}
+            />
+          </div>
+        </div>
+      </React.Fragment>
+    ));
+
   render() {
-    const { modal, primary, secondary } = this.state;
+    const { modal, primary, secondary, userColors } = this.state;
     return (
       <Sidebar
         as={Menu}
@@ -77,6 +113,7 @@ class ColorPanel extends Component {
           </Modal.Content>
           <Modal.Actions>
             <Button color="green" inverted onClick={this.handleSaveColors}>
+              {this.displayUserColors(userColors)}
               <Icon name="checkmark" />
               Save Colors
             </Button>
@@ -91,4 +128,7 @@ class ColorPanel extends Component {
   }
 }
 
-export default ColorPanel;
+export default connect(
+  null,
+  { setColors }
+)(ColorPanel);
