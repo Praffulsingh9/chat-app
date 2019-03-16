@@ -9,9 +9,9 @@ import MetaPanel from "./MetaPanel/MetaPanel";
 //prettier-ignore
 const App = ({
   currentUser,currentChannel,isPrivateChannel,userPosts,primaryColor,secondaryColor}) => (
-  <Grid columns="equal" className="app" style={{ background: secondaryColor }}>
+  <Grid columns="equal" className="app" style={{ background:secondaryColor }}>
     <ColorPanel
-      key={currentUser && currentUser.namess}
+      key={currentUser && currentUser.name}
       currentUser={currentUser}
     />
     <SidePanel key={currentUser && currentUser.id} primaryColor={primaryColor} currentUser={currentUser} />

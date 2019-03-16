@@ -19,18 +19,18 @@ class ColorPanel extends Component {
     modal: false,
     primary: "",
     secondary: "",
+    usersRef: firebase.database().ref("users"),
     user: this.props.currentUser,
-    userColors: [],
-    usersRef: firebase.database().ref("users")
+    userColors: []
   };
 
   componentDidMount() {
     if (this.state.user) {
-      this.addListeners(this.state.user.currentUser.uid);
+      this.addListener(this.state.user.id);
     }
   }
 
-  addListeners = userId => {
+  addListener = userId => {
     let userColors = [];
     this.state.usersRef.child(`${userId}/colors`).on("child_added", snap => {
       userColors.unshift(snap.val());
@@ -42,9 +42,9 @@ class ColorPanel extends Component {
 
   closeModal = () => this.setState({ modal: false });
 
-  handlePrimary = color => this.setState({ primary: color.hex });
+  handleChangePrimary = color => this.setState({ primary: color.hex });
 
-  handleSecondary = color => this.setState({ secondary: color.hex });
+  handleChangeSecondary = color => this.setState({ secondary: color.hex });
 
   handleSaveColors = () => {
     if (this.state.primary && this.state.secondary) {
@@ -52,16 +52,15 @@ class ColorPanel extends Component {
     }
   };
 
-  saveColors = () => {
+  saveColors = (primary, secondary) => {
     this.state.usersRef
-      .child(`${this.state.user.currentUser.uid}/colors`)
+      .child(`${this.state.user.id}/colors`)
       .push()
       .update({
         primary,
         secondary
       })
       .then(() => {
-        console.log("colors added");
         this.closeModal();
       })
       .catch(err => console.error(err));
@@ -76,10 +75,10 @@ class ColorPanel extends Component {
           className="color__container"
           onClick={() => this.props.setColors(color.primary, color.secondary)}
         >
-          <div className="color__square" style={{ color: color.primary }}>
+          <div className="color__square" style={{ background: color.primary }}>
             <div
               className="color__overlay"
-              style={{ color: color.secondary }}
+              style={{ background: color.secondary }}
             />
           </div>
         </div>
@@ -99,21 +98,27 @@ class ColorPanel extends Component {
       >
         <Divider />
         <Button icon="add" size="small" color="blue" onClick={this.openModal} />
+        {this.displayUserColors(userColors)}
         <Modal basic open={modal} onClose={this.closeModal}>
           <Modal.Header>Choose App colors</Modal.Header>
           <Modal.Content>
             <Segment inverted>
               <Label content="Primary Color" />
-              <SliderPicker color={primary} onChange={this.handlePrimary} />
+              <SliderPicker
+                color={primary}
+                onChange={this.handleChangePrimary}
+              />
             </Segment>
             <Segment inverted>
               <Label content="Secondary Color" />
-              <SliderPicker color={secondary} onChange={this.handleSecondary} />
+              <SliderPicker
+                color={secondary}
+                onChange={this.handleChangeSecondary}
+              />
             </Segment>
           </Modal.Content>
           <Modal.Actions>
             <Button color="green" inverted onClick={this.handleSaveColors}>
-              {this.displayUserColors(userColors)}
               <Icon name="checkmark" />
               Save Colors
             </Button>
