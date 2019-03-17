@@ -26,7 +26,7 @@ class ColorPanel extends Component {
 
   componentDidMount() {
     if (this.state.user) {
-      this.addListener(this.state.user.id);
+      this.addListener(this.state.user.currentUser.uid);
     }
   }
 
@@ -54,7 +54,7 @@ class ColorPanel extends Component {
 
   saveColors = (primary, secondary) => {
     this.state.usersRef
-      .child(`${this.state.user.id}/colors`)
+      .child(`${this.state.user.currentUser.uid}/colors`)
       .push()
       .update({
         primary,
