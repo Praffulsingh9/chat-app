@@ -153,7 +153,7 @@ class MessageForm extends Component {
       typingRef
         .child(channel.id)
         .child(user.currentUser.uid)
-        .set(displayName);
+        .set(user.currentUser.displayName);
     } else {
       typingRef
         .child(channel.id)
