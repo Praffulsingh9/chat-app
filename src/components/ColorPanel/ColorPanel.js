@@ -30,12 +30,22 @@ class ColorPanel extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.removeListener();
+  }
+
   addListener = userId => {
     let userColors = [];
     this.state.usersRef.child(`${userId}/colors`).on("child_added", snap => {
       userColors.unshift(snap.val());
       this.setState({ userColors });
     });
+  };
+
+  removeListener = () => {
+    this.state.usersRef
+      .child(`${this.state.user.currentUser.uid}/colors`)
+      .off();
   };
 
   openModal = () => this.setState({ modal: true });
