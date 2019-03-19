@@ -68,7 +68,7 @@ class DirectMessages extends Component {
 
   addStatusToUser = (userId, connected = true) => {
     const updatedUsers = this.state.users.reduce((acc, user) => {
-      if (user.currentUser.id === userId) {
+      if (user.uid === userId) {
         user["status"] = `${connected ? "online" : "offline"}`;
       }
       return acc.concat(user);
