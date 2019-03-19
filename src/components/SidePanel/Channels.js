@@ -48,7 +48,7 @@ class Channels extends Component {
     this.state.channelsRef.on("child_added", snap => {
       loadedChannels.push(snap.val());
       this.setState({ channels: loadedChannels }, () => this.setFirstChannel());
-      this.addNotificationListeners(snap.key);
+      this.addNotificationListener(snap.key);
     });
   };
 
@@ -64,7 +64,7 @@ class Channels extends Component {
         lastTotal = notifications[index].total;
 
         if (snap.numChildren() - lastTotal > 0) {
-          notifications[index] = snap.numChildren() - lastTotal;
+          notifications[index].count = snap.numChildren() - lastTotal;
         }
       }
       notifications[index].lastKnownTotal = snap.numChildren();
@@ -79,7 +79,7 @@ class Channels extends Component {
     this.setState({ notifications });
   };
 
-  addNotificationListeners = channelId => {
+  addNotificationListener = channelId => {
     this.state.messagesRef.child(channelId).on("value", snap => {
       if (this.state.channel) {
         this.handleNotifications(
